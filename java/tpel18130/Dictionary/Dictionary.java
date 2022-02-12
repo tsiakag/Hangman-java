@@ -5,15 +5,15 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-
+//"OL31390631M"
 public class Dictionary {
-    private static String ID = "OL31390631M";
+    private static String ID;
     private static String[] dictionary;
 
-    //TODO remove main
-    public static void main(String[] args) throws IOException {
-        ReadData r = new ReadData(ID);
+    public Dictionary(String ID) { this.ID = ID; }
 
+    public void CreateDictionary() throws IOException, UndersizeException, UnbalancedException, InvalidCountException, InvalidCountException {
+        ReadData r = new ReadData(ID);
         String api_result = r.GetJSONdata();
 
         dictionary = new String[api_result.length()];
@@ -23,6 +23,11 @@ public class Dictionary {
 
         WriteToFile w = new WriteToFile(dictionary, ID);
         w.doWrite();
+    }
+
+    //TODO remove main
+    public static void main(String[] args) {
+
     }
 }
 
@@ -60,7 +65,7 @@ class ReadData {
                 throw new NullPointerException("no description found");
             }
 
-            return results; //TODO might remove later and change method type
+            return results;
         }
         catch(Exception e){
             System.out.println("No valid object found");
@@ -78,27 +83,32 @@ class WriteToFile{
         this.ID = ID;
     }
 
-    private List<String> ValidWords() {
+    private List<String> ValidWords() throws UndersizeException, UnbalancedException, InvalidCountException, InvalidCountException  {
         List<String> arr = new ArrayList<String>();
         int count = 0;
         for(String word: words) {
             word = word.replaceAll("[^a-zA-Z]", "");
 
-            if(word.length() < 5 || arr.contains(word)) continue; // we want at least 6 length and unique words
+            if(word.length() < 6 || arr.contains(word)) continue; // we want at least 6 length and unique words
 
             if(word.length() >= 9) count++; //we count them to see if the dictionary is valid
 
             arr.add(word);
         }
 
-        //TODO create exceptions (remove statement below maybe)
-        if(arr.size() < 20 || ((float)count / (float)(arr.size())) < 0.2f)
-            return Collections.emptyList(); //invalid dictionary
-        else
-            return arr;
+        //exceptions to check if dictionary is valid
+        if(arr.size() < 20) throw new UndersizeException();
+        if((float)count / (float)(arr.size()) < 0.2f) throw new UnbalancedException();
+        List<String> temp = new ArrayList<String>();
+        for(String i : arr) {
+            if (i.length() < 6) throw new InvalidRangeException();
+            if (temp.contains(i)) throw new InvalidCountException();
+            temp.add(i);
+        }
+        return arr;
     }
 
-    public void doWrite() throws IOException {
+    public void doWrite() throws IOException, UndersizeException, UnbalancedException, InvalidCountException, InvalidCountException  {
         //add lot of if's
         List<String> validWords = new ArrayList<String>();
         validWords = ValidWords();
