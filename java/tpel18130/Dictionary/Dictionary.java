@@ -19,16 +19,45 @@ public class Dictionary {
         dictionary = new String[api_result.length()];
         dictionary = api_result.split("\s+");
 
-        System.out.println(Arrays.toString(dictionary));
-
         WriteToFile w = new WriteToFile(dictionary, ID);
         w.doWrite();
     }
 
-    //TODO remove main
-    public static void main(String[] args) {
 
+    //getters"hangman-"+ID+".txt"
+    public String getRandomWord() throws IOException {
+        List<String> temp = fileToList();
+        int rnd = new Random().nextInt(temp.size());
+        return temp.get(rnd);
     }
+    public List<String> getDictionary() throws IOException {
+        return fileToList();
+    }
+    public String getID() {
+        return ID;
+    }
+
+    private List<String> fileToList() throws IOException {
+        FileReader fr = null;
+        try { fr = new FileReader("hangman-"+ID+".txt"); }
+        catch (FileNotFoundException e) {
+            System.out.println("File not found in your system");
+        }
+
+        String temp = "";
+        List<String> result = new ArrayList<String>();
+        int content;
+        while ((content = fr.read()) != -1) {
+            if((char) content == '\n') {
+                result.add(temp);
+                temp = "";
+            }
+            else
+                temp += (char) content;
+        }
+        fr.close();
+        return result;
+    } //TODO speed this up !!!!
 }
 
 
