@@ -27,7 +27,7 @@ public class Player {
         //TODO check if those errors are needed
         if(s.length() != 1) throw new InvalidInput();
         if(s.replaceAll("[^A-Z]", "").equals("")) throw new InvalidInput();
-        //TODO make user chooose a valid letter
+        //TODO make user choose a valid letter
         return s;
     }
 
