@@ -25,6 +25,12 @@ public class Player {
         else
             score += 30;
     }
+    public void removeFromScore() {
+        if(score > 15)
+            score -= 15;
+        else
+            score = 0;
+    }
     public void removeHp() {
         hp--;
     }

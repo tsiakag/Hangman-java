@@ -54,10 +54,11 @@ public class TestMain {
             if(player.getChosenWord().charAt(letter) != choice) {
                 System.out.println("wrong, try again");
                 player.removeHp();
+                player.removeFromScore();
             }
             //correct answer
             else{
-                System.out.println("Success");
+                System.out.println("Letter found");
                 player.addToScore(probList.get(letter).get(choice));
 
                 foundIndexes.add(letter);
