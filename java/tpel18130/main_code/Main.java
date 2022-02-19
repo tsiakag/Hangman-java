@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +23,11 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        window = primaryStage;
+        Parent root = FXMLLoader.load(getClass().getResource("basic_window.fxml"));
+
+        primaryStage.setTitle("Medialab Hangman");
+
+        primaryStage.setScene(new Scene(root, 800, 800));
+        primaryStage.show();
     }
 }
