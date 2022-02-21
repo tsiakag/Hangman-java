@@ -7,12 +7,17 @@ import java.util.*;
 
 //"OL31390631M"
 public class Dictionary {
-    private static String ID;
-    private static String[] dictionary;
+    private String ID;
+    private String[] dictionary;
 
-    public Dictionary(String ID) { this.ID = ID; }
+    public Dictionary(String ID) throws IOException {
+        this.ID = ID;
+        File f = new File("./medialab/hangman-"+ ID +".txt");
+        if(f.exists())
+            this.dictionary = fileToList().toArray(new String[0]);
+    }
 
-    public void CreateDictionary() throws IOException, UndersizeException, UnbalancedException, InvalidCountException, InvalidCountException {
+    public void CreateDictionary() throws IOException, UndersizeException, UnbalancedException, InvalidCountException {
         ReadData r = new ReadData(ID);
         String api_result = r.GetJSONdata();
 
@@ -36,10 +41,28 @@ public class Dictionary {
     public String getID() {
         return ID;
     }
+    public float getSixLetters() {
+        int count = 0;
+        for(String word : dictionary)
+            if(word.length() == 6) count++;
+        return ((float)count / (float)dictionary.length);
+    }
+    public float getSevenToNineLetters() {
+        int count = 0;
+        for(String word : dictionary)
+            if(word.length() >= 6 && word.length() <= 9) count++;
+        return (float) count / (float) dictionary.length;
+    }
+    public float getMoreThanTenLetters() {
+        int count = 0;
+        for(String word : dictionary)
+            if(word.length() >= 10) count++;
+        return (float) count / (float) dictionary.length;
+    }
 
     private List<String> fileToList() throws IOException {
         FileReader fr = null;
-        try { fr = new FileReader("hangman-"+ID+".txt"); }
+        try { fr = new FileReader("./medialab/hangman-"+ID+".txt"); }
         catch (FileNotFoundException e) {
             System.out.println("File not found in your system");
         }
@@ -57,7 +80,7 @@ public class Dictionary {
         }
         fr.close();
         return result;
-    } //TODO speed this up !!!!
+    }
 }
 
 
@@ -147,7 +170,7 @@ class WriteToFile{
             return;
         }
 
-        FileWriter writer = new FileWriter("hangman-"+ID+".txt");
+        FileWriter writer = new FileWriter("./medialab/hangman-"+ID+".txt");
         for(String word: validWords) {
             writer.write(word.toUpperCase() + System.lineSeparator());
         }

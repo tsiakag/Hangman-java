@@ -27,7 +27,7 @@ public class Main extends Application{
 
         primaryStage.setTitle("Medialab Hangman");
 
-        primaryStage.setScene(new Scene(root, 800, 800));
+        primaryStage.setScene(new Scene(root, 640, 400));
         primaryStage.show();
     }
 }
