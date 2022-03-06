@@ -19,7 +19,7 @@ public class TestMain {
         Player player = new Player(prob.getChosenWord());
 
         Set<Integer> foundIndexes = new HashSet<>();
-        Map<Integer, Map<Character, Float>> probList = prob.probalitiesList(foundIndexes);
+        Map<Integer, Map<Character, Float>> probList = prob.getProbalitiesList(foundIndexes);
 
         while(true) {
             //word found
@@ -63,7 +63,7 @@ public class TestMain {
 
                 foundIndexes.add(letter);
                 prob.updateValidWords(letter);
-                probList = prob.probalitiesList(foundIndexes);
+                probList = prob.getProbalitiesList(foundIndexes);
             }
 
 

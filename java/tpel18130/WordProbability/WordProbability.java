@@ -44,7 +44,7 @@ public class WordProbability {
     }
 
     //TODO check if this is correct representation
-    public Map<Integer, Map<Character, Float>> probalitiesList(Set<Integer> s) {
+    public Map<Integer, Map<Character, Float>> getProbalitiesList(Set<Integer> s) {
         Map<Integer, Map<Character, Float>> temp = new HashMap<Integer, Map<Character, Float>>();
 
         for (int i = 0; i < chosenWord.length()-1; i++)
