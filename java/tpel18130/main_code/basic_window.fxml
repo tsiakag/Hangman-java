@@ -39,6 +39,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -73,20 +74,20 @@
                <children>
                   <HBox prefHeight="31.0" prefWidth="640.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Words" wrappingWidth="212.13671875">
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
+                        <Text fx:id="titleWords" layoutX="0.0" layoutY="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Words" wrappingWidth="212.13671875">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Text>
+                        <Text fx:id="titleScore" layoutX="20.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" wrappingWidth="212.13671875">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Text>
-                        <Text layoutX="20.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" wrappingWidth="212.13671875">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                        <Text layoutX="233.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Success" wrappingWidth="198.13671875">
+                        <Text fx:id="titleSuccess" layoutX="233.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Success" wrappingWidth="198.13671875">
                            <font>
                               <Font size="24.0" />
                            </font>
@@ -95,7 +96,22 @@
                   </HBox>
                   <HBox prefHeight="243.0" prefWidth="640.0">
                      <children>
-                        <VBox prefHeight="243.0" prefWidth="488.0" />
+                        <VBox prefHeight="243.0" prefWidth="488.0">
+                           <children>
+                              <ImageView fx:id="hangmanImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                 <VBox.margin>
+                                    <Insets left="135.0" top="10.0" />
+                                 </VBox.margin>
+                              </ImageView>
+                              <Text fx:id="hagmanWord" strokeType="OUTSIDE" strokeWidth="0.0" text="Start a New Game !" textAlignment="CENTER" wrappingWidth="366.13671875">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="50.0" />
+                                 </VBox.margin>
+                              </Text>
+                           </children></VBox>
                         <TableView fx:id="LetterTableView" prefHeight="243.0" prefWidth="392.0">
                           <columns>
                             <TableColumn fx:id="table_int" prefWidth="69.0" text="LetterNum" />

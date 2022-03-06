@@ -9,9 +9,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import tpel18130.Dictionary.Dictionary;
@@ -29,6 +32,12 @@ public class Controller {
     public TableView LetterTableView;
     public TableColumn table_int;
     public TableColumn table_letters;
+    public Text titleWords;
+    public Text titleScore;
+    public Text titleSuccess;
+    public ImageView hangmanImage;
+    public Text hagmanWord;
+
     //non-fxml properties
     private Dictionary d;
     private WordProbability prob;
@@ -40,14 +49,16 @@ public class Controller {
     @FXML
     private VBox vbox;
 
+    //menu methods
     @FXML
     void Start() throws IOException {
         prob = new WordProbability(d, d.getRandomWord());
         player = new Player(prob.getChosenWord());
         RefreshLetters();
-        System.out.println("Start Success");
+        SetTitleText();
+        LoadHangmanImage();
+        createWordArray();
     }
-
     @FXML
     void Exit() {
         Platform.exit();
@@ -177,6 +188,7 @@ public class Controller {
         window.showAndWait();
     }
 
+    //table method
     @FXML
     void RefreshLetters() throws IOException {
 
@@ -196,6 +208,34 @@ public class Controller {
 
 
 
+    }
+
+    //title method
+    @FXML
+    void SetTitleText() throws IOException {
+        //TODO implement the rest of the titles
+        titleWords.setText("Words: " + String.valueOf(d.getDictionary().size()));
+        titleScore.setText("Score: " + "0");
+        titleSuccess.setText("Success: " + "0");
+    }
+
+    //main game methods
+    @FXML
+    void LoadHangmanImage() {
+        Image bufferedImage = new Image("file:imgs/hanged" + String.valueOf(player.getHp()-1) + ".jpg");
+        hangmanImage.setImage(bufferedImage);
+    }
+    @FXML
+    void createWordArray() {
+        String result = "";
+        String word = player.getChosenWord();
+        for(int i = 0; i < word.length(); i++) {
+            if (foundIndexes.contains(i))
+                result += word.charAt(i);
+            else
+                result += "_ ";
+        }
+        hagmanWord.setText(result);
     }
 }
 
