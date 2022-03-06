@@ -37,17 +37,38 @@ public class Controller {
     public Text titleSuccess;
     public ImageView hangmanImage;
     public Text hagmanWord;
+    public ChoiceBox<Integer> selectNum;
+    public ChoiceBox<Character> selectLetter;
+    public Button OKbutton;
 
     //non-fxml properties
     private Dictionary d;
     private WordProbability prob;
     private Player player;
     Set<Integer> foundIndexes = new HashSet<>();
+    Set<Character> foundletters = new HashSet<>();
+    Map<Integer, Map<Character, Float>> probList;
+
 
     @FXML
     private MenuItem Quit;
     @FXML
     private VBox vbox;
+
+    //basicMethod
+    @FXML
+    void Reload() throws IOException {
+        RefreshLetters();
+        SetTitleText();
+        LoadHangmanImage();
+        createWordArray();
+
+        selectNum.valueProperty().setValue(null);
+        selectLetter.valueProperty().setValue(null);
+
+        SelectLetterInit();
+        SelectNumInit();
+    }
 
     //menu methods
     @FXML
@@ -58,6 +79,8 @@ public class Controller {
         SetTitleText();
         LoadHangmanImage();
         createWordArray();
+        SelectLetterInit();
+        SelectNumInit();
     }
     @FXML
     void Exit() {
@@ -192,7 +215,7 @@ public class Controller {
     @FXML
     void RefreshLetters() throws IOException {
 
-        Map<Integer, Map<Character, Float>> probList = prob.getProbalitiesList(foundIndexes);
+        probList = prob.getProbalitiesList(foundIndexes);
 
         List<LetterList> temp= new ArrayList<>();
         for (Map.Entry<Integer, Map<Character, Float>> entry : probList.entrySet())
@@ -227,16 +250,78 @@ public class Controller {
     }
     @FXML
     void createWordArray() {
+        //TODO make found letters have a bigger scope
         String result = "";
         String word = player.getChosenWord();
+
+        for(Integer i:foundIndexes)
+            foundletters.add(word.charAt(i));
+
         for(int i = 0; i < word.length(); i++) {
-            if (foundIndexes.contains(i))
+            if (foundletters.contains(word.charAt(i)))
                 result += word.charAt(i);
             else
                 result += "_ ";
         }
         hagmanWord.setText(result);
     }
+
+    //selection methods
+    @FXML
+    void SelectNumInit () {
+        String word = player.getChosenWord();
+
+        for(int i = 0; i < word.length(); i++)
+            if(!foundIndexes.contains(i))
+                selectNum.getItems().add(i);
+    }
+    @FXML
+    void SelectLetterInit () {
+        String word = player.getChosenWord();
+
+        for(int i = 0; i < word.length(); i++)
+            if(!foundletters.contains(word.charAt(i)))
+                selectLetter.getItems().add(word.charAt(i));
+    }
+    @FXML
+    void ChooseLetter () throws IOException {
+        //TODO do most of the implementation
+        int index = selectNum.getValue();
+        Character letter = selectLetter.getValue();
+        String word = player.getChosenWord();
+
+        System.out.println(index);
+        System.out.println(letter);
+
+        //word found
+        if(prob.getValidWords().size() == 1) {
+            for(int i=0; i<(player.getChosenWord().length() - foundIndexes.size() - 1); ++i)
+                player.addToScore(1.0f);
+            Reload();
+        }
+
+        //wrong answer
+        if(word.charAt(index) != letter) {
+            player.removeFromScore();
+            player.removeHp();
+            Reload();
+        }
+        //correct answer
+        else {
+            player.addToScore(probList.get(letter).get(letter));
+
+            foundIndexes.add(index);
+            foundletters.add(letter);
+            Reload();
+        }
+    }
 }
+
+
+
+
+
+
+
 
 
