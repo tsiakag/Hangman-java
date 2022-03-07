@@ -64,7 +64,7 @@
         <Menu mnemonicParsing="false" text="Details">
           <items>
             <MenuItem fx:id="DictionaryDetails" mnemonicParsing="false" onAction="#DictionaryDetails" text="Dictionary" />
-            <MenuItem mnemonicParsing="false" text="Rounds" />
+            <MenuItem fx:id="rounds" mnemonicParsing="false" text="Rounds" onAction="#ShowRounds" />
             <MenuItem fx:id="solution" mnemonicParsing="false" onAction="#ShowSolution" text="Solution" />
           </items>
         </Menu>
@@ -144,7 +144,7 @@
                                     <Insets left="20.0" top="20.0" />
                                  </HBox.margin>
                               </ChoiceBox>
-                              <Button fx:id="OKbutton" mnemonicParsing="false" text="OK" onAction="#ChooseLetter">
+                              <Button fx:id="OKbutton" mnemonicParsing="false" onAction="#ChooseLetter" text="OK">
                                  <HBox.margin>
                                     <Insets left="20.0" top="20.0" />
                                  </HBox.margin>

@@ -24,7 +24,9 @@ import tpel18130.Dictionary.UndersizeException;
 import tpel18130.Player.Player;
 import tpel18130.WordProbability.WordProbability;
 import tpel18130.fxml_helper_classes.LetterList;
+import tpel18130.fxml_helper_classes.SaveFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -45,6 +47,11 @@ public class Controller {
     private Dictionary d;
     private WordProbability prob;
     private Player player;
+
+    //those two are only used for calulating success percentage
+    private int successCounter = 0;
+    private int round = 0;
+
     Set<Integer> foundIndexes = new HashSet<>();
     Set<Character> foundletters = new HashSet<>();
     Map<Integer, Map<Character, Float>> probList;
@@ -55,7 +62,7 @@ public class Controller {
     @FXML
     private VBox vbox;
 
-    //basicMethod
+    //basicMethods for the game to work
     @FXML
     void Reload() throws IOException {
         RefreshLetters();
@@ -63,11 +70,24 @@ public class Controller {
         LoadHangmanImage();
         createWordArray();
 
-        selectNum.valueProperty().setValue(null);
-        selectLetter.valueProperty().setValue(null);
-
-        SelectLetterInit();
-        SelectNumInit();
+        //check if you lose here for the picture to show
+        if(player.hasLost())
+            ShowDefeatScreen();
+//        selectLetter.getItems().clear();
+//        selectNum.getItems().clear();
+//        SelectNumInit();
+    }
+    @FXML
+    void RestartGame() throws IOException {
+        //basically clears everything in order for the game to work again
+        selectLetter.getItems().clear();
+        round = 0; successCounter = 0;
+        prob = null;
+        player = null;
+        foundletters.clear();
+        foundIndexes.clear();
+        probList.clear();
+        Start();
     }
 
     //menu methods
@@ -79,7 +99,8 @@ public class Controller {
         SetTitleText();
         LoadHangmanImage();
         createWordArray();
-        SelectLetterInit();
+
+        selectNum.getItems().clear();
         SelectNumInit();
     }
     @FXML
@@ -194,12 +215,48 @@ public class Controller {
         window.initModality(Modality.APPLICATION_MODAL);
 
         window.setTitle("Solution");
-        window.setMinWidth(300);
+        window.setMinWidth(200);
         window.setMinHeight(200);
 
         Label label = new Label();
+        label.setFont(new Font("Segoe UI", 16));
+        label.setText("The solution was: " + player.getChosenWord());
+
+        Label label2 = new Label();
+        label2.setFont(new Font("Segoe UI", 20));
+        label2.setText("Try Again :)");
+
+        VBox layout = new VBox(3);
+        layout.setPadding(new Insets(20,20,20,20));
+        layout.getChildren().addAll(label, label2);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(layout);
+        window.setScene(scene);
+        window.showAndWait();
+
+        SaveFile sv = new SaveFile();
+        try {
+            sv.WriteToSave(player.getChosenWord(), round, "Computer");
+            RestartGame();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    void ShowRounds () throws FileNotFoundException {
+        Stage window = new Stage();
+        window.initModality(Modality.APPLICATION_MODAL);
+
+        window.setTitle("Rounds Statistics");
+        window.setMinWidth(300);
+        window.setMinHeight(200);
+
+        SaveFile sv = new SaveFile();
+
+        Label label = new Label();
         label.setFont(new Font("Segoe UI", 20));
-        label.setText("The solution is: " + player.getChosenWord());
+        label.setText("The Statistics for the last 5 rounds are: \n" + sv.ReadFromSave());
 
         VBox layout = new VBox(3);
         layout.setPadding(new Insets(20,20,20,20));
@@ -219,7 +276,7 @@ public class Controller {
 
         List<LetterList> temp= new ArrayList<>();
         for (Map.Entry<Integer, Map<Character, Float>> entry : probList.entrySet())
-          temp.add(new LetterList(entry.getKey(), String.valueOf(entry.getValue().keySet())));
+          temp.add(new LetterList(entry.getKey()+1, String.valueOf(entry.getValue().keySet())));
 
 
         final ObservableList<LetterList> data = FXCollections.observableArrayList(temp);
@@ -229,8 +286,6 @@ public class Controller {
 
         LetterTableView.setItems(data);
 
-
-
     }
 
     //title method
@@ -238,14 +293,19 @@ public class Controller {
     void SetTitleText() throws IOException {
         //TODO implement the rest of the titles
         titleWords.setText("Words: " + String.valueOf(d.getDictionary().size()));
-        titleScore.setText("Score: " + "0");
-        titleSuccess.setText("Success: " + "0");
+        titleScore.setText("Score: " + String.valueOf(player.getScore()));
+        float temp = (float) successCounter / (float) round;
+        temp *= 100;
+        if(round != 0)
+            titleSuccess.setText("Success: " + String.valueOf(temp)+"%");
+        else
+            titleSuccess.setText("Success: 0.0%");
     }
 
     //main game methods
     @FXML
     void LoadHangmanImage() {
-        Image bufferedImage = new Image("file:imgs/hanged" + String.valueOf(player.getHp()-1) + ".jpg");
+        Image bufferedImage = new Image("file:imgs/hanged" + String.valueOf(player.getHp()) + ".jpg");
         hangmanImage.setImage(bufferedImage);
     }
     @FXML
@@ -257,7 +317,7 @@ public class Controller {
         for(Integer i:foundIndexes)
             foundletters.add(word.charAt(i));
 
-        for(int i = 0; i < word.length(); i++) {
+        for(int i = 0; i < word.length()-1; i++) {
             if (foundletters.contains(word.charAt(i)))
                 result += word.charAt(i);
             else
@@ -271,33 +331,33 @@ public class Controller {
     void SelectNumInit () {
         String word = player.getChosenWord();
 
-        for(int i = 0; i < word.length(); i++)
+        for(int i = 0; i < word.length()-1; i++)
             if(!foundIndexes.contains(i))
-                selectNum.getItems().add(i);
-    }
-    @FXML
-    void SelectLetterInit () {
-        String word = player.getChosenWord();
+                selectNum.getItems().add(i+1);
 
-        for(int i = 0; i < word.length(); i++)
-            if(!foundletters.contains(word.charAt(i)))
-                selectLetter.getItems().add(word.charAt(i));
+        //inits the letter choicebox
+        selectNum.setOnAction(event -> {
+            selectLetter.getItems().clear();
+            if(probList.get(selectNum.getValue()-1).keySet().size() != 0)
+                selectLetter.getItems().addAll(probList.get(selectNum.getValue()-1).keySet());
+        });
     }
     @FXML
     void ChooseLetter () throws IOException {
         //TODO do most of the implementation
-        int index = selectNum.getValue();
+        round++;
+        int index = selectNum.getValue()-1;
         Character letter = selectLetter.getValue();
         String word = player.getChosenWord();
-
-        System.out.println(index);
-        System.out.println(letter);
 
         //word found
         if(prob.getValidWords().size() == 1) {
             for(int i=0; i<(player.getChosenWord().length() - foundIndexes.size() - 1); ++i)
                 player.addToScore(1.0f);
+            SaveFile sv = new SaveFile();
+            sv.WriteToSave(player.getChosenWord(), round, "Player");
             Reload();
+            ShowWinningScreen();
         }
 
         //wrong answer
@@ -308,14 +368,92 @@ public class Controller {
         }
         //correct answer
         else {
-            player.addToScore(probList.get(letter).get(letter));
+            successCounter++;
+            player.addToScore(probList.get(index).get(letter));
 
             foundIndexes.add(index);
             foundletters.add(letter);
+            prob.updateValidWords(index);
+            probList = prob.getProbalitiesList(foundIndexes);
             Reload();
         }
     }
+
+    //win game
+    @FXML
+    void ShowWinningScreen() {
+        Stage window = new Stage();
+        window.initModality(Modality.APPLICATION_MODAL);
+
+        window.setTitle("You won!!!");
+        window.setMinWidth(300);
+        window.setMinHeight(300);
+
+        Label label = new Label();
+        label.setText("WordFound!!!: " + player.getChosenWord());
+
+        Label label2 = new Label();
+        label2.setText("Player won with a score of: " + String.valueOf(player.getScore()));
+
+        Button button = new Button("Play again");
+        button.setOnAction(event -> {
+            try {
+                RestartGame();
+                window.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        VBox layout = new VBox(3);
+        layout.setPadding(new Insets(20,20,20,20));
+        layout.getChildren().addAll(label, label2, button);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(layout);
+        window.setScene(scene);
+        window.showAndWait();
+    }
+
+    //lose the game
+    @FXML
+    void ShowDefeatScreen() {
+        Stage window = new Stage();
+        window.initModality(Modality.APPLICATION_MODAL);
+
+        window.setTitle("You lost :(");
+        window.setMinWidth(300);
+        window.setMinHeight(300);
+
+        Label label = new Label();
+        label.setText("The word you were looking for was: " + player.getChosenWord());
+
+        Label label2 = new Label();
+        label2.setText("Better luck next time!!!");
+
+        Button button = new Button("Try again");
+        button.setOnAction(event -> {
+            try {
+                SaveFile sv = new SaveFile();
+                sv.WriteToSave(player.getChosenWord(), round, "Computer");
+                RestartGame();
+                window.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        VBox layout = new VBox(3);
+        layout.setPadding(new Insets(20,20,20,20));
+        layout.getChildren().addAll(label, label2, button);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(layout);
+        window.setScene(scene);
+        window.showAndWait();
+    }
 }
+
 
 
 
