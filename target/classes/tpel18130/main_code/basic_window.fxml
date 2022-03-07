@@ -33,12 +33,15 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -51,18 +54,18 @@
       <menus>
         <Menu mnemonicParsing="false" text="Application">
           <items>
-            <MenuItem mnemonicParsing="false" text="Start" />
-            <MenuItem fx:id="Load" mnemonicParsing="false"  onAction="#Load" text="Load" />
-            <MenuItem  fx:id="Create" mnemonicParsing="false" onAction="#Create" text="Create" />
+            <MenuItem fx:id="Start" mnemonicParsing="false" onAction="#Start" text="Start" />
+            <MenuItem fx:id="Load" mnemonicParsing="false" onAction="#Load" text="Load" />
+            <MenuItem fx:id="Create" mnemonicParsing="false" onAction="#Create" text="Create" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="Quit" mnemonicParsing="false" onAction="#Exit" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Details">
           <items>
-            <MenuItem  fx:id="DictionaryDetails" mnemonicParsing="false" onAction="#DictionaryDetails" text="Dictionary" />
-            <MenuItem mnemonicParsing="false" text="Rounds" />
-            <MenuItem mnemonicParsing="false" text="Solution" />
+            <MenuItem fx:id="DictionaryDetails" mnemonicParsing="false" onAction="#DictionaryDetails" text="Dictionary" />
+            <MenuItem fx:id="rounds" mnemonicParsing="false" text="Rounds" onAction="#ShowRounds" />
+            <MenuItem fx:id="solution" mnemonicParsing="false" onAction="#ShowSolution" text="Solution" />
           </items>
         </Menu>
       </menus>
@@ -73,20 +76,20 @@
                <children>
                   <HBox prefHeight="31.0" prefWidth="640.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Words" wrappingWidth="212.13671875">
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
+                        <Text fx:id="titleWords" layoutX="0.0" layoutY="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Words" wrappingWidth="212.13671875">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                            <font>
+                                <Font size="24.0" />
+                            </font>
+                        </Text>
+                        <Text fx:id="titleScore" layoutX="20.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" wrappingWidth="212.13671875">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Text>
-                        <Text layoutX="20.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score" wrappingWidth="212.13671875">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Text>
-                        <Text layoutX="233.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Success" wrappingWidth="198.13671875">
+                        <Text fx:id="titleSuccess" layoutX="233.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Success" wrappingWidth="198.13671875">
                            <font>
                               <Font size="24.0" />
                            </font>
@@ -95,16 +98,61 @@
                   </HBox>
                   <HBox prefHeight="243.0" prefWidth="640.0">
                      <children>
-                        <VBox prefHeight="243.0" prefWidth="488.0" />
-                        <TableView prefHeight="243.0" prefWidth="152.0">
+                        <VBox prefHeight="243.0" prefWidth="488.0">
+                           <children>
+                              <ImageView fx:id="hangmanImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                 <VBox.margin>
+                                    <Insets left="135.0" top="10.0" />
+                                 </VBox.margin>
+                              </ImageView>
+                              <Text fx:id="hagmanWord" strokeType="OUTSIDE" strokeWidth="0.0" text="Start a New Game !" textAlignment="CENTER" wrappingWidth="366.13671875">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="50.0" />
+                                 </VBox.margin>
+                              </Text>
+                           </children></VBox>
+                        <TableView fx:id="LetterTableView" prefHeight="243.0" prefWidth="392.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
+                            <TableColumn fx:id="table_int" prefWidth="69.0" text="LetterNum" />
+                            <TableColumn fx:id="table_letters" prefWidth="201.0" text="PossibleLetters" />
                           </columns>
                         </TableView>
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="640.0" />
+                  <VBox prefHeight="98.0" prefWidth="640.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Guess a letter" textAlignment="CENTER" wrappingWidth="638.8603515625">
+                           <font>
+                              <Font size="22.0" />
+                           </font>
+                        </Text>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <ChoiceBox fx:id="selectNum" prefWidth="150.0">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <HBox.margin>
+                                    <Insets left="110.0" top="20.0" />
+                                 </HBox.margin>
+                              </ChoiceBox>
+                              <ChoiceBox fx:id="selectLetter" prefWidth="150.0">
+                                 <HBox.margin>
+                                    <Insets left="20.0" top="20.0" />
+                                 </HBox.margin>
+                              </ChoiceBox>
+                              <Button fx:id="OKbutton" mnemonicParsing="false" onAction="#ChooseLetter" text="OK">
+                                 <HBox.margin>
+                                    <Insets left="20.0" top="20.0" />
+                                 </HBox.margin>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </children>
