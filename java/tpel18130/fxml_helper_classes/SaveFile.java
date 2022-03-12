@@ -1,13 +1,19 @@
 package tpel18130.fxml_helper_classes;
 
 import java.io.*;
-import java.util.List;
 
 public class SaveFile {
+    /**
+     * A small class for implementing a <b>savefile system</b> for the gui so as for the user
+     * to be able to see the last 5 games played.
+     * The class is responsible for writing the game results to a file named as <b>savefile</b> and retrieve the data
+     * from the last 5 played game from it
+     */
 
-    //Todo maybe fill it?
+    //default constructor for the SaveFile class
     public SaveFile() {}
 
+    //writes to the file "save" the required saved state of the game
     public void WriteToSave (String word, int rounds, String winner) throws IOException {
         FileWriter writer = new FileWriter("./java/tpel18130/fxml_helper_classes/savefile", true);
 
@@ -17,11 +23,13 @@ public class SaveFile {
         writer.close();
     }
 
+    //reads the last 5 games from the file "savefile" saved there
     public String ReadFromSave () throws FileNotFoundException {
         File save = new File("./java/tpel18130/fxml_helper_classes/savefile");
-        return LastLines(save, 9);
+        return LastLines(save, 9); //for the last 5 lines we count 9 '\n' characters
     }
 
+    //used for printing the last lines of a file
     private String LastLines(File file, int lines) {
         java.io.RandomAccessFile fileHandler = null;
         try {

@@ -390,19 +390,21 @@ public class Controller {
         window.setMinHeight(300);
 
         Label label = new Label();
-        label.setText("WordFound!!!: " + player.getChosenWord());
+        label.setText("Word Found!!! The word was: " + player.getChosenWord());
 
         Label label2 = new Label();
         label2.setText("Player won with a score of: " + String.valueOf(player.getScore()));
 
         Button button = new Button("Play again");
-        button.setOnAction(event -> {
+        window.setOnCloseRequest(e -> {
             try {
                 RestartGame();
-                window.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
+        });
+        button.setOnAction(event -> {
+            window.close();
         });
 
         VBox layout = new VBox(3);
@@ -432,15 +434,17 @@ public class Controller {
         label2.setText("Better luck next time!!!");
 
         Button button = new Button("Try again");
-        button.setOnAction(event -> {
+        window.setOnCloseRequest(e -> {
             try {
                 SaveFile sv = new SaveFile();
                 sv.WriteToSave(player.getChosenWord(), round, "Computer");
                 RestartGame();
-                window.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
+        });
+        button.setOnAction(event -> {
+            window.close();
         });
 
         VBox layout = new VBox(3);
