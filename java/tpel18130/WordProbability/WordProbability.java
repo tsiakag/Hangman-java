@@ -35,7 +35,7 @@ public class WordProbability {
         return m;
     }
 
-    //TODO remove after debug
+
     public List<String> getValidWords() {
         return validWords;
     }
@@ -43,7 +43,7 @@ public class WordProbability {
         return chosenWord;
     }
 
-    //TODO check if this is correct representation
+
     public Map<Integer, Map<Character, Float>> getProbalitiesList(Set<Integer> s) {
         Map<Integer, Map<Character, Float>> temp = new HashMap<Integer, Map<Character, Float>>();
 

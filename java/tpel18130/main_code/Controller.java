@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import tpel18130.Dictionary.Dictionary;
 import tpel18130.Dictionary.InvalidCountException;
 import tpel18130.Dictionary.UnbalancedException;
@@ -73,9 +74,6 @@ public class Controller {
         //check if you lose here for the picture to show
         if(player.hasLost())
             ShowDefeatScreen();
-//        selectLetter.getItems().clear();
-//        selectNum.getItems().clear();
-//        SelectNumInit();
     }
     @FXML
     void RestartGame() throws IOException {
@@ -377,6 +375,7 @@ public class Controller {
             probList = prob.getProbalitiesList(foundIndexes);
             Reload();
         }
+        CheckIfWon();
     }
 
     //win game
@@ -384,10 +383,12 @@ public class Controller {
     void ShowWinningScreen() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+
 
         window.setTitle("You won!!!");
-        window.setMinWidth(300);
-        window.setMinHeight(300);
+        window.setMinWidth(640);
+        window.setMinHeight(400);
 
         Label label = new Label();
         label.setText("Word Found!!! The word was: " + player.getChosenWord());
@@ -396,15 +397,13 @@ public class Controller {
         label2.setText("Player won with a score of: " + String.valueOf(player.getScore()));
 
         Button button = new Button("Play again");
-        window.setOnCloseRequest(e -> {
+        button.setOnAction(event -> {
             try {
                 RestartGame();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                window.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-        button.setOnAction(event -> {
-            window.close();
         });
 
         VBox layout = new VBox(3);
@@ -422,10 +421,12 @@ public class Controller {
     void ShowDefeatScreen() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+
 
         window.setTitle("You lost :(");
-        window.setMinWidth(300);
-        window.setMinHeight(300);
+        window.setMinWidth(640);
+        window.setMinHeight(400);
 
         Label label = new Label();
         label.setText("The word you were looking for was: " + player.getChosenWord());
@@ -434,17 +435,17 @@ public class Controller {
         label2.setText("Better luck next time!!!");
 
         Button button = new Button("Try again");
-        window.setOnCloseRequest(e -> {
+        button.setOnAction(event -> {
+            SaveFile sv = new SaveFile();
             try {
-                SaveFile sv = new SaveFile();
                 sv.WriteToSave(player.getChosenWord(), round, "Computer");
                 RestartGame();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+                window.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-        button.setOnAction(event -> {
-            window.close();
+
         });
 
         VBox layout = new VBox(3);
@@ -455,6 +456,19 @@ public class Controller {
         Scene scene = new Scene(layout);
         window.setScene(scene);
         window.showAndWait();
+    }
+
+    @FXML
+    void CheckIfWon() throws IOException {
+        //check if word found in here because in the input method it requires one more round
+        if(prob.getValidWords().size() == 1) {
+            for(int i=0; i<(player.getChosenWord().length() - foundIndexes.size() - 1); ++i)
+                player.addToScore(1.0f);
+            SaveFile sv = new SaveFile();
+            sv.WriteToSave(player.getChosenWord(), round, "Player");
+            Reload();
+            ShowWinningScreen();
+        }
     }
 }
 

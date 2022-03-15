@@ -38,20 +38,6 @@ public class Player {
         return hp == 0;
     }
 
-    //give char input on given index
-    public Character giveInput(Set<Character> set) throws InvalidInput {
-        Scanner in = new Scanner(System.in);
-        String s = in.nextLine();
-
-        if(s.length() != 1) throw new InvalidInput();
-        if(s.replaceAll("[^A-Z]", "").equals("")) throw new InvalidInput();
-
-        Character c = s.charAt(0);
-        if(!set.contains(c)) throw new InvalidInput();
-
-        return c;
-    }
-
     //getters
     public int getHp() {
         return hp;

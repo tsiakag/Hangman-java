@@ -5,7 +5,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
-//"OL31390631M"
+//test dictionary: "OL31390631M"
 public class Dictionary {
     private String ID;
     private String[] dictionary;
@@ -29,7 +29,6 @@ public class Dictionary {
     }
 
 
-    //getters"hangman-"+ID+".txt"
     public String getRandomWord() throws IOException {
         List<String> temp = fileToList();
         int rnd = new Random().nextInt(temp.size());

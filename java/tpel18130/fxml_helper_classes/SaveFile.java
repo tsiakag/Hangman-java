@@ -10,10 +10,20 @@ public class SaveFile {
      * from the last 5 played game from it
      */
 
-    //default constructor for the SaveFile class
+    /**
+     *default constructor for the SaveFile class
+     */
     public SaveFile() {}
 
-    //writes to the file "save" the required saved state of the game
+    //
+
+    /**
+     * writes to the file "save" the required saved state of the game
+     * @param word a String that indicates the selected word in that game
+     * @param rounds an Integer indicating how many
+     * @param winner a String indicating if the player won or the Computer (we use only those two values)
+     * @throws IOException handle expresions during writing on the savefile
+     */
     public void WriteToSave (String word, int rounds, String winner) throws IOException {
         FileWriter writer = new FileWriter("./java/tpel18130/fxml_helper_classes/savefile", true);
 
@@ -24,6 +34,15 @@ public class SaveFile {
     }
 
     //reads the last 5 games from the file "savefile" saved there
+
+    /**
+     * reads the last 5 games from the file "savefile" saved there.
+     * Uses the private method "LastLines" in order to print the 5 last lines
+     * <i>Notice: Lastlines takes as argument n=9 because it reads '\n' characters</i>
+     * @return the last 5 lines of the "savefile"
+     * @throws FileNotFoundException for handling if the file doesn't exist, something that
+     * will happen if the "savefile" is deleted
+     */
     public String ReadFromSave () throws FileNotFoundException {
         File save = new File("./java/tpel18130/fxml_helper_classes/savefile");
         return LastLines(save, 9); //for the last 5 lines we count 9 '\n' characters
